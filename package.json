@@ -1,0 +1,16 @@
+{
+  "name": "wehere-server",
+  "version": "1.0.0",
+  "description": "this is the server side of my website (wehere)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nakmiers",
+    "nak",
+    "wehere"
+  ],
+  "author": "NaKMier",
+  "license": "ISC"
+}
