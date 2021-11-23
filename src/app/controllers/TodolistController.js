@@ -3,16 +3,16 @@ const TodoListModel = require('../models/TodoListModel')
 class TodolistController {
    // [post]: /todolist
    getAllTask = async function (req, res, next) {
-      console.log('getTask')
+      console.log('getAllTask')
       try {
-         const tasks = await TodoListModel.find({ _id: { $in: req.body.taskList } })
-         res.status(500).json(tasks)
+         const taskList = await TodoListModel.find({ _id: { $in: req.body.taskList } })
+         res.status(200).json(taskList)
       } catch (err) {
          res.status(500).json(err)
       }
    }
 
-   // [POST]: /add-task
+   // [POST]: /todo-list/add-task
    addTask = async function (req, res, next) {
       console.log('addTask')
       try {
@@ -24,22 +24,23 @@ class TodolistController {
       }
    }
 
-   // [PUT]: /edit-task/:taskId
+   // [PUT]: /todo-list/edit-task/:taskId
    editTask = async function (req, res, next) {
       console.log('editTask')
       try {
-         const taskEdited = await TodoListModel.findOneAndUpdate(
-            { _id: req.params.taskId },
-            req.body,
-            { new: true }
-         )
-         res.status(200).json(taskEdited)
+         const { data } = req.body
+         const taskEditedList = await data.map(async task => {
+            return await TodoListModel.findOneAndUpdate({ _id: task._id }, task, {
+               new: true,
+            })
+         })
+         res.status(200).json(taskEditedList)
       } catch (err) {
          res.status(500).json(err)
       }
    }
 
-   // [DELETE]: /delete-task/:taskId
+   // [DELETE]: /todo-list/delete-task/:taskId
    deleteTask = async function (req, res, next) {
       console.log('deleteTask')
       try {

@@ -23,9 +23,28 @@ class UserController {
             {
                ...user,
                setting: {
-                  ...user.length.setting,
+                  ...user.setting,
                   theme: +req.params.themeIndex,
                },
+            },
+            { new: true }
+         )
+         res.status(200).json(userUpdated)
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [PUT]: /users/update-todo-list/:userId/:taskId
+   updateTodoList = async function (req, res, next) {
+      console.log('updateTodoList')
+      try {
+         const user = await UserModel.find({ _id: req.params.userId })
+         const userUpdated = await UserModel.findOneAndUpdate(
+            { _id: req.params.userId },
+            {
+               ...user,
+               todolist: [...user[0].todolist, req.params.taskId],
             },
             { new: true }
          )
