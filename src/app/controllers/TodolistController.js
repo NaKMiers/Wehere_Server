@@ -27,16 +27,28 @@ class TodolistController {
    // [PUT]: /todo-list/edit-task/:taskId
    editTask = async function (req, res, next) {
       console.log('editTask')
-      try {
-         const { data } = req.body
-         const taskEditedList = await data.map(async task => {
-            return await TodoListModel.findOneAndUpdate({ _id: task._id }, task, {
+      const { data } = req.body
+      if (data.length === 1) {
+         try {
+            const taskEdited = await TodoListModel.findOneAndUpdate({ _id: data[0]._id }, data[0], {
                new: true,
             })
-         })
-         res.status(200).json(taskEditedList)
-      } catch (err) {
-         res.status(500).json(err)
+            res.status(200).json([taskEdited])
+         } catch (err) {
+            res.json(err)
+         }
+      } else {
+         try {
+            const taskEditedList = data.map(
+               async task =>
+                  await TodoListModel.findOneAndUpdate({ _id: task._id }, task, {
+                     new: true,
+                  })
+            )
+            res.status(200).json(taskEditedList)
+         } catch (err) {
+            res.json(err)
+         }
       }
    }
 
