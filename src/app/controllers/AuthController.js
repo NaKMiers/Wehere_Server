@@ -4,8 +4,8 @@ const UserModel = require('../models/UserModel')
 class AuthController {
    // [POST]: /auth/check-users
    checkUser = async function (req, res, next) {
+      console.log('checkUser')
       try {
-         console.log('checkUser')
          const matchOtherUsername = await UserModel.find({ username: req.body.username })
          const matchOtherEmail = await UserModel.find({ email: req.body.email })
          res.status(200).json({
@@ -34,7 +34,8 @@ class AuthController {
             matchPassword = matchEmail[0].password === md5(req.body.password)
          }
 
-         res.status(200).json({ userLogin, matchPassword })
+         const { password, updatedAt, ...other } = userLogin._doc
+         res.status(200).json({ userLogin: other, matchPassword })
       } catch (err) {
          res.state(200).json(err)
       }
@@ -42,10 +43,13 @@ class AuthController {
 
    // [POST]: /auth/create
    createUser = async function (req, res, next) {
+      console.log('createUser')
       try {
          const user = new UserModel({ ...req.body, password: md5(req.body.password) })
          const newUser = await user.save()
-         res.status(200).json(newUser)
+
+         const { password, updatedAt, ...other } = newUser._doc
+         res.status(200).json(other)
       } catch (err) {
          res.status(500).json(err)
       }

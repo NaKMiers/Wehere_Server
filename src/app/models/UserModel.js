@@ -3,11 +3,15 @@ const Schema = mongoose.Schema
 
 const UserModel = new Schema(
    {
-      name: String,
       username: String,
       email: String,
       password: String,
       avatar: { type: String, default: 'https://bom.to/ueUL3N' },
+      background: { type: String, default: 'https://bom.so/6K8pK7' },
+      birthDate: { type: String, default: '1/1/2004' },
+      gender: String,
+      maritalStatus: String,
+      live: String,
       experiences: Number,
       online: { type: Boolean, default: false },
       blogs: Array,
@@ -24,6 +28,7 @@ const UserModel = new Schema(
          theme: { type: Number, default: 0 },
       },
       notifications: Array,
+      justTextedRecently: Array,
    },
    { timestamps: true }
 )
