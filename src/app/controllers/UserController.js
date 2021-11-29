@@ -1,5 +1,6 @@
 const UserModel = require('../models/UserModel')
 const ConversationModel = require('../models/ConversationModel')
+const NotificationModel = require('../models/NotificationModel')
 
 class UserController {
    // [GET]: /users/?userId&username
@@ -67,18 +68,36 @@ class UserController {
       try {
          const userRequest = await UserModel.findById(userRequestId)
          const requestedUser = await UserModel.findById(requestedUserId)
-         if (!requestedUser.friends.includes(userRequestId)) {
-            const { _id, avatar, username } = userRequest
-            const notify = {
+         if (
+            !requestedUser.friends.includes(userRequestId) &&
+            !userRequest.addFriendRequestList.includes(requestedUserId)
+         ) {
+            // add requestedUserId into userRequest's addFriendRequestList
+            await UserModel.updateOne(
+               { _id: userRequestId },
+               { $addToSet: { addFriendRequestList: requestedUserId } }
+            )
+
+            // add new notify to requestedUser
+            const notifyData = {
                type: 'ADD_FRIEND_REQUEST',
-               seen: false,
-               userRequest: { _id, avatar, username },
+               senderId: userRequestId,
+               senderAvt: userRequest.avatar,
+               senderUsername: userRequest.username,
             }
-            await requestedUser.updateOne({ $addToSet: { notifications: notify } })
+            const newNotify = new NotificationModel(notifyData)
+            const savedNotify = await newNotify.save()
+            await UserModel.updateOne(
+               { _id: requestedUserId },
+               {
+                  $addToSet: { notifications: savedNotify._id.toString() },
+               }
+            )
+            await UserModel.updateOne({ _id: requestedUserId }, { seenNotifications: false })
 
             res.status(200).json('Request sent, please wait for a response.')
          } else {
-            res.status(200).json('This user is already your friend.')
+            res.status(200).json('What wrong?')
          }
       } catch (err) {
          res.status(500).json(err)
@@ -91,60 +110,66 @@ class UserController {
       const userRequestId = req.params.userId
       const curUserId = req.body.curUserId
       const value = req.body.value // true(accept)/no(deny)
+      const notifyId = req.body.notifyId
       try {
          if (value) {
             // add userRequestId to curUser's friendList
-            await UserModel.updateOne({ _id: curUserId }, { $addToSet: { friends: userRequestId } })
-            // remove curUser notifications
-            const curUser = await UserModel.find({ _id: curUserId })
-            await UserModel.findOneAndUpdate(
-               { _id: curUser[0]._id },
-               {
-                  ...curUser,
-                  notifications: curUser[0].notifications.filter(n => {
-                     return n.userRequest._id.toString() !== userRequestId
-                  }),
-               },
+            const curUser = await UserModel.findOneAndUpdate(
+               { _id: curUserId },
+               { $addToSet: { friends: userRequestId } },
                { new: true }
             )
 
             // add curUserId to userRequest's friendList
             await UserModel.updateOne({ _id: userRequestId }, { $addToSet: { friends: curUserId } })
             // add notify to userRequest's notifications
-            const { _id, username, avatar } = curUser[0]
-            const notify = {
-               type: 'ADD_FRIEND_ACCEPT',
-               userAcceptRequest: { _id, username, avatar },
+            const notifyData = {
+               type: 'ADD_FRIEND_RESPONSE',
+               senderId: curUserId,
+               senderAvt: curUser.avatar,
+               senderUsername: curUser.username,
             }
+            const newNotify = new NotificationModel(notifyData)
+            const savedNotify = await newNotify.save()
             await UserModel.updateOne(
                { _id: userRequestId },
-               { $addToSet: { notifications: notify } }
+               {
+                  $addToSet: { notifications: savedNotify._id.toString() },
+               }
             )
+            await UserModel.updateOne({ _id: userRequestId }, { seenNotifications: false })
 
             // create new conversation between two user
             const newConversation = new ConversationModel({
                members: [userRequestId, curUserId],
             })
-            const savedConversation = await newConversation.save()
+            await newConversation.save()
+            res.status(200).json('User has been your friend.')
          }
-         res.status(200).json('User has been your friend.')
+         // remove curUser notifications
+         await NotificationModel.deleteOne({ _id: notifyId })
+         await UserModel.updateOne({ _id: curUserId }, { $pull: { notifications: notifyId } })
+
+         // remove curUserId in userRequest's addFriendRequestList
+         await UserModel.updateOne(
+            { _id: userRequestId },
+            { $pull: { addFriendRequestList: curUserId } }
+         )
       } catch (err) {
          res.status(500).json(err)
       }
    }
 
-   // [POST]: /users/get-friends
-   getFriends = async function (req, res, next) {
-      console.log('getFriends')
-      const curUserFriends = req.body.friends
+   // [PUT]: /users/seen-notifications
+   seenNotifications = async function (req, res, next) {
+      console.log('seenNotifications')
+      const userId = req.params.userId
       try {
-         const friends = await UserModel.find({ _id: { $in: curUserFriends } })
-         const friendList = friends.map(f => {
-            const { password, updatedAt, ...other } = f._doc
-            return other
-         })
-
-         res.status(200).json(friendList)
+         await UserModel.findOneAndUpdate(
+            { _id: userId },
+            { $set: { seenNotifications: true } },
+            { new: true }
+         )
       } catch (err) {
          res.status(500).json(err)
       }

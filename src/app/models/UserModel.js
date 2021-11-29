@@ -27,8 +27,10 @@ const UserModel = new Schema(
       setting: {
          theme: { type: Number, default: 0 },
       },
+      seenNotifications: { type: Boolean, default: false },
       notifications: Array,
       justTextedRecently: Array,
+      addFriendRequestList: Array,
    },
    { timestamps: true }
 )
