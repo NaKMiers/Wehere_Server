@@ -1,4 +1,5 @@
 const md5 = require('md5')
+const jwt = require('jsonwebtoken')
 const UserModel = require('../models/UserModel')
 
 class AuthController {
@@ -20,22 +21,37 @@ class AuthController {
    // [POST]: /auth/login
    login = async (req, res, next) => {
       console.log('login')
+      const username = req.body.usernameOrEmail
+      const email = req.body.usernameOrEmail
+      const pw = req.body.password
+
       try {
-         const matchUsername = await UserModel.find({ username: req.body.usernameOrEmail })
-         const matchEmail = await UserModel.find({ email: req.body.usernameOrEmail })
+         const matchUsername = await UserModel.find({ username: username })
+         const matchEmail = await UserModel.find({ email: email })
          let matchPassword = false
          let userLogin
+         let token
 
          if (matchUsername.length !== 0) {
             userLogin = matchUsername[0]
-            matchPassword = matchUsername[0].password === md5(req.body.password)
+            matchPassword = matchUsername[0].password === md5(pw)
+
+            token = jwt.sign(
+               { _id: userLogin._id, username: userLogin.username },
+               process.env.AUTHORIZATION_SECRECT_KEY
+            )
          } else if (matchEmail.length !== 0) {
             userLogin = matchEmail[0]
-            matchPassword = matchEmail[0].password === md5(req.body.password)
+            matchPassword = matchEmail[0].password === md5(pw)
+
+            token = jwt.sign(
+               { _id: userLogin._id, username: userLogin.username },
+               process.env.AUTHORIZATION_SECRECT_KEY
+            )
          }
 
          const { password, updatedAt, ...other } = userLogin._doc
-         res.status(200).json({ userLogin: other, matchPassword })
+         res.status(200).json({ userLogin: other, matchPassword, token })
       } catch (err) {
          res.state(200).json(err)
       }
@@ -47,9 +63,15 @@ class AuthController {
       try {
          const user = new UserModel({ ...req.body, password: md5(req.body.password) })
          const newUser = await user.save()
+         console.log('newUser: ', newUser)
+
+         const token = jwt.sign(
+            { _id: newUser._id, username: newUser.username },
+            process.env.AUTHORIZATION_SECRECT_KEY
+         )
 
          const { password, updatedAt, ...other } = newUser._doc
-         res.status(200).json(other)
+         res.status(200).json({ ...other, token })
       } catch (err) {
          res.status(500).json(err)
       }

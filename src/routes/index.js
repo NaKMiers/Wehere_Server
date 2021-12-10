@@ -5,12 +5,14 @@ const conversationRouter = require('./conversation')
 const messageRouter = require('./message')
 const notificationRouter = require('./notification')
 
-function routes(app) {
-   app.use('/users', usersRouter)
+const authMiddleware = require('../app/middlewares/authMiddleware')
 
+function routes(app) {
    app.use('/auth', authRouter)
 
-   app.use('/todo-list', todoListRouter)
+   app.use('/users', authMiddleware, usersRouter)
+
+   app.use('/todo-list', authMiddleware, todoListRouter)
 
    app.use('/conversations', conversationRouter)
 

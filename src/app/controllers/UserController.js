@@ -1,13 +1,13 @@
+const jwt = require('jsonwebtoken')
 const UserModel = require('../models/UserModel')
 const ConversationModel = require('../models/ConversationModel')
 const NotificationModel = require('../models/NotificationModel')
 
 class UserController {
-   // [GET]: /users/?userId&username
-   getUser = async function (req, res, next) {
+   // [GET]: /users/:userId
+   getUser = async function (req, res) {
       console.log('getUser')
       const userId = req.params.userId
-      console.log(userId)
       try {
          const user = await UserModel.findById(userId)
 
@@ -18,12 +18,13 @@ class UserController {
       }
    }
 
-   // [PATCH]: /users/change-theme/:userId/:themeIndex
+   // [PATCH]: /users/change-theme/:themeIndex
    changeTheme = async function (req, res, next) {
       console.log('changeTheme')
+      const userId = req.user._id
       try {
          const userUpdated = await UserModel.findOneAndUpdate(
-            { _id: req.params.userId },
+            { _id: userId },
             {
                $set: {
                   'setting.theme': +req.params.themeIndex,
@@ -39,22 +40,20 @@ class UserController {
       }
    }
 
-   // [PUT]: /users/update-todo-list/:userId/:taskId
+   // [PUT]: /users/update-todo-list/:taskId
    updateTodoList = async function (req, res, next) {
       console.log('updateTodoList')
+      const userId = req.user._id
+      const taskId = req.params.taskId
       try {
-         const user = await UserModel.find({ _id: req.params.userId })
          const userUpdated = await UserModel.findOneAndUpdate(
-            { _id: req.params.userId },
-            {
-               ...user,
-               todolist: [...user[0].todolist, req.params.taskId],
-            },
+            { _id: userId },
+            { $addToSet: { todolist: taskId } },
             { new: true }
          )
 
          const { password, updatedAt, ...other } = userUpdated._doc
-         res.status(200).json(userUpdated)
+         res.status(200).json(other)
       } catch (err) {
          res.status(500).json(err)
       }
@@ -63,7 +62,7 @@ class UserController {
    // [PUT]: /users/add-friend/request/:userId
    addFriendRequest = async function (req, res, next) {
       console.log('addFriendRequest')
-      const userRequestId = req.body.curUserId
+      const userRequestId = req.user._id
       const requestedUserId = req.params.userId
       try {
          const userRequest = await UserModel.findById(userRequestId)
@@ -108,7 +107,7 @@ class UserController {
    addFriendResponse = async function (req, res, next) {
       console.log('addFriendResponse')
       const userRequestId = req.params.userId
-      const curUserId = req.body.curUserId
+      const curUserId = req.user._id
       const value = req.body.value // true(accept)/no(deny)
       const notifyId = req.body.notifyId
       try {
@@ -163,7 +162,7 @@ class UserController {
    // [PUT]: /users/seen-notifications
    seenNotifications = async function (req, res, next) {
       console.log('seenNotifications')
-      const userId = req.params.userId
+      const userId = req.user._id
       try {
          await UserModel.findOneAndUpdate(
             { _id: userId },
