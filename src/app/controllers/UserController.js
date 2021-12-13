@@ -7,9 +7,16 @@ class UserController {
    // [GET]: /users/:userId
    getUser = async function (req, res) {
       console.log('getUser')
-      const userId = req.params.userId
+      const userId = req.params.userId === 'undefined' ? req.user._id : req.params.userId
+      const authGoogleId = req.user.authGoogleId
+      const authType = req.user.authType
       try {
-         const user = await UserModel.findById(userId)
+         let user
+         if (authType === 'local' || req.params.userId) {
+            user = await UserModel.findById(userId)
+         } else {
+            user = await UserModel.findOne({ authGoogleId, authType })
+         }
 
          const { password, updatedAt, ...other } = user._doc
          res.status(200).json(other)
@@ -139,10 +146,16 @@ class UserController {
             await UserModel.updateOne({ _id: userRequestId }, { seenNotifications: false })
 
             // create new conversation between two user
-            const newConversation = new ConversationModel({
-               members: [userRequestId, curUserId],
+            const isExistCvs = await ConversationModel.find({
+               members: { $in: [curUserId], $in: [userRequestId] },
             })
-            await newConversation.save()
+            if (!isExistCvs.length) {
+               const newConversation = new ConversationModel({
+                  members: [userRequestId, curUserId],
+               })
+               await newConversation.save()
+            }
+
             res.status(200).json('User has been your friend.')
          }
          // remove curUser notifications
@@ -169,6 +182,53 @@ class UserController {
             { $set: { seenNotifications: true } },
             { new: true }
          )
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [PUT]: /users/remove-notify/:notifyId
+   removeNotify = async function (req, res, next) {
+      console.log('removeNotify')
+      const curNotifyId = req.params.notifyId
+      console.log(curNotifyId)
+      try {
+         await NotificationModel.deleteOne({ _id: curNotifyId })
+         res.status(200).json('Notify has been removed')
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [PUT]: /users/un-friend/:userId
+   unfriend = async function (req, res, next) {
+      console.log('unfriend')
+      const unfriendedId = req.params.userId
+      const curUserId = req.user._id
+
+      try {
+         // remove unfriendedId from curUser'sfriends
+         await UserModel.updateOne({ _id: curUserId }, { $pull: { friends: unfriendedId } })
+
+         // remove curUserId from unfriended's friends
+         await UserModel.updateOne({ _id: unfriendedId }, { $pull: { friends: curUserId } })
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [PUT]: /users/online-status
+   changeOnlineStatus = async function (req, res, next) {
+      console.log('changeOnlineStatus')
+      const userId = req.user._id
+      const status = req.body.status
+      try {
+         await UserModel.updateOne(
+            { _id: userId },
+            { $set: { online: status, onlineLated: Date.now() } },
+            { new: true }
+         )
+         res.status(200)
       } catch (err) {
          res.status(500).json(err)
       }

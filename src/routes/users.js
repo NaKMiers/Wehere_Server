@@ -8,6 +8,9 @@ router.put('/change-theme/:themeIndex', UserController.changeTheme)
 router.put('/update-todo-list/:taskId', UserController.updateTodoList)
 router.put('/add-friend/request/:userId', UserController.addFriendRequest)
 router.put('/add-friend/response/:userId', UserController.addFriendResponse)
+router.put('/un-friend/:userId', UserController.unfriend)
+router.put('/remove-notify/:notifyId', UserController.removeNotify)
 router.put('/seen-notifications', UserController.seenNotifications)
+router.put('/online-status', UserController.changeOnlineStatus)
 
 module.exports = router
