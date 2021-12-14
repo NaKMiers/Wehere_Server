@@ -1,4 +1,4 @@
-const jwt = require('jsonwebtoken')
+const hash = require('object-hash')
 const UserModel = require('../models/UserModel')
 const ConversationModel = require('../models/ConversationModel')
 const NotificationModel = require('../models/NotificationModel')
@@ -37,25 +37,6 @@ class UserController {
                   'setting.theme': +req.params.themeIndex,
                },
             },
-            { new: true }
-         )
-
-         const { password, updatedAt, ...other } = userUpdated._doc
-         res.status(200).json(other)
-      } catch (err) {
-         res.status(500).json(err)
-      }
-   }
-
-   // [PUT]: /users/update-todo-list/:taskId
-   updateTodoList = async function (req, res, next) {
-      console.log('updateTodoList')
-      const userId = req.user._id
-      const taskId = req.params.taskId
-      try {
-         const userUpdated = await UserModel.findOneAndUpdate(
-            { _id: userId },
-            { $addToSet: { todolist: taskId } },
             { new: true }
          )
 
@@ -229,6 +210,26 @@ class UserController {
             { new: true }
          )
          res.status(200)
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [PUT]: /user/change-password
+   changePassword = async function (req, res) {
+      console.log('changePassword')
+      const userId = req.user._id
+      const curPassword = hash(req.body.curPassword)
+      const newPassword = hash(req.body.newPassword)
+      try {
+         let isChangePasswordSuccess = false
+         const user = await UserModel.findById(userId)
+         console.log(user.password === curPassword)
+         if (user.password === curPassword) {
+            isChangePasswordSuccess = true
+            await UserModel.updateOne({ _id: userId }, { $set: { password: newPassword } })
+         }
+         res.status(200).json({ isChangePasswordSuccess })
       } catch (err) {
          res.status(500).json(err)
       }

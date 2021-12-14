@@ -26,8 +26,6 @@ const UserModel = new Schema(
       images: Array,
       videos: Array,
       shorts: Array,
-      todolist: Array,
-      diaries: Array,
       songs: Array,
       playlists: Array,
       friends: Array,
