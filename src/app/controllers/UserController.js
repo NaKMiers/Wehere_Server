@@ -181,23 +181,6 @@ class UserController {
       }
    }
 
-   // [PUT]: /users/un-friend/:userId
-   unfriend = async function (req, res, next) {
-      console.log('unfriend')
-      const unfriendedId = req.params.userId
-      const curUserId = req.user._id
-
-      try {
-         // remove unfriendedId from curUser'sfriends
-         await UserModel.updateOne({ _id: curUserId }, { $pull: { friends: unfriendedId } })
-
-         // remove curUserId from unfriended's friends
-         await UserModel.updateOne({ _id: unfriendedId }, { $pull: { friends: curUserId } })
-      } catch (err) {
-         res.status(500).json(err)
-      }
-   }
-
    // [PUT]: /users/online-status
    changeOnlineStatus = async function (req, res, next) {
       console.log('changeOnlineStatus')
@@ -230,6 +213,42 @@ class UserController {
             await UserModel.updateOne({ _id: userId }, { $set: { password: newPassword } })
          }
          res.status(200).json({ isChangePasswordSuccess })
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [GET]: /users/get-friends
+   getFriends = async function (req, res) {
+      console.log('getFriends')
+      const userId = req.user._id
+      console.log('userId: ', userId)
+      try {
+         const curUser = await UserModel.findById(userId)
+         let friends = await UserModel.find({ _id: { $in: curUser.friends } })
+         friends = friends.map(f => {
+            const { password, createdAt, ...other } = f._doc
+            return other
+         })
+         res.status(200).json(friends)
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [PUT]: /users/un-friend/:userId
+   unfriend = async function (req, res, next) {
+      console.log('unfriend')
+      const unfriendedId = req.params.userId
+      const curUserId = req.user._id
+
+      try {
+         // remove unfriendedId from curUser'sfriends
+         await UserModel.updateOne({ _id: curUserId }, { $pull: { friends: unfriendedId } })
+
+         // remove curUserId from unfriended's friends
+         await UserModel.updateOne({ _id: unfriendedId }, { $pull: { friends: curUserId } })
+         res.status(200).json({ unfriendedId })
       } catch (err) {
          res.status(500).json(err)
       }
