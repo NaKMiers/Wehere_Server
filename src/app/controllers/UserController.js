@@ -172,7 +172,6 @@ class UserController {
    removeNotify = async function (req, res, next) {
       console.log('removeNotify')
       const curNotifyId = req.params.notifyId
-      console.log(curNotifyId)
       try {
          await NotificationModel.deleteOne({ _id: curNotifyId })
          res.status(200).json('Notify has been removed')
@@ -207,7 +206,6 @@ class UserController {
       try {
          let isChangePasswordSuccess = false
          const user = await UserModel.findById(userId)
-         console.log(user.password === curPassword)
          if (user.password === curPassword) {
             isChangePasswordSuccess = true
             await UserModel.updateOne({ _id: userId }, { $set: { password: newPassword } })
@@ -222,7 +220,6 @@ class UserController {
    getFriends = async function (req, res) {
       console.log('getFriends')
       const userId = req.user._id
-      console.log('userId: ', userId)
       try {
          const curUser = await UserModel.findById(userId)
          let friends = await UserModel.find({ _id: { $in: curUser.friends } })
@@ -249,6 +246,23 @@ class UserController {
          // remove curUserId from unfriended's friends
          await UserModel.updateOne({ _id: unfriendedId }, { $pull: { friends: curUserId } })
          res.status(200).json({ unfriendedId })
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [POST]: /users/get-accounts
+   getAccounts = async function (req, res, next) {
+      console.log('getAccounts')
+      const accountList = req.body.accountList
+      try {
+         let accounts = await UserModel.find({ _id: { $in: accountList } })
+         accounts = accounts.map(acc => {
+            const { password, createdAt, ...other } = acc._doc
+            return other
+         })
+
+         res.status(200).json(accounts)
       } catch (err) {
          res.status(500).json(err)
       }

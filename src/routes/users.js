@@ -13,5 +13,6 @@ router.put('/seen-notifications', UserController.seenNotifications)
 router.put('/online-status', UserController.changeOnlineStatus)
 router.put('/change-password', UserController.changePassword)
 router.get('/:userId', UserController.getUser)
+router.post('/get-accounts', UserController.getAccounts)
 
 module.exports = router

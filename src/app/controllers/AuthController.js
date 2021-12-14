@@ -143,7 +143,6 @@ class AuthController {
       console.log('createUser')
       const pw = hash(req.body.password)
       try {
-         console.log('await hash: ', hash(pw))
          const user = new UserModel({ ...req.body, password: pw })
          const newUser = await user.save()
 

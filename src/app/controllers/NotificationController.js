@@ -27,11 +27,10 @@ class NotificationController {
 
    // [DELETE]: /notifications/remove-notify/:notifyId
    removeNotify = async function (req, res, next) {
-      console.log('notify', req)
+      console.log('removeNotify')
       const notifyId = req.params.notifyId
       try {
          const notifyDeleted = await NotificationModel.findOneAndDelete({ _id: notifyId })
-         console.log(notifyDeleted)
          res.status(200).json(notifyDeleted)
       } catch (err) {
          res.status(500).json(err)
