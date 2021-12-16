@@ -216,13 +216,25 @@ class UserController {
       }
    }
 
-   // [GET]: /users/get-friends
+   // [POST]: /users/get-friends
    getFriends = async function (req, res) {
       console.log('getFriends')
       const userId = req.user._id
+      const friendList = req.body.friendList
+      let friends
       try {
-         const curUser = await UserModel.findById(userId)
-         let friends = await UserModel.find({ _id: { $in: curUser.friends } })
+         if (friendList) {
+            friends = await UserModel.find({
+               _id: friendList,
+               online: true,
+            })
+         } else {
+            const curUser = await UserModel.findById(userId)
+            friends = await UserModel.find({
+               _id: curUser.friends,
+            })
+         }
+
          friends = friends.map(f => {
             const { password, createdAt, ...other } = f._doc
             return other
