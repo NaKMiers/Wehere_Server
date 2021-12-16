@@ -279,6 +279,42 @@ class UserController {
          res.status(500).json(err)
       }
    }
+
+   // [PUT]: /users/update-avatar
+   updateAvatar = async function (req, res) {
+      console.log('updateAvatar')
+      const userId = req.user._id
+      const avatar = req.body.avatar
+      try {
+         const userUpdated = await UserModel.findOneAndUpdate(
+            { _id: userId },
+            { $set: { avatar } },
+            { new: true }
+         )
+
+         res.status(200).json({ avatar: userUpdated.avatar })
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [PUT]: /users/update-background
+   updateBackground = async function (req, res) {
+      console.log('updateBackground')
+      const userId = req.user._id
+      const background = req.body.background
+      try {
+         const userUpdated = await UserModel.findOneAndUpdate(
+            { _id: userId },
+            { $set: { background } },
+            { new: true }
+         )
+
+         res.status(200).json({ background: userUpdated.background })
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
 }
 
 module.exports = new UserController()

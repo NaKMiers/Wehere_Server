@@ -14,5 +14,7 @@ router.put('/online-status', UserController.changeOnlineStatus)
 router.put('/change-password', UserController.changePassword)
 router.get('/:userId', UserController.getUser)
 router.post('/get-accounts', UserController.getAccounts)
+router.put('/update-avatar', UserController.updateAvatar)
+router.put('/update-background', UserController.updateBackground)
 
 module.exports = router
