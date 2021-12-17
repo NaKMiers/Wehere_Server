@@ -5,6 +5,8 @@ const conversationRouter = require('./conversation')
 const messageRouter = require('./message')
 const notificationRouter = require('./notification')
 const diaryRouter = require('./diary')
+const imageRouter = require('./images')
+const blogRouter = require('./blogs')
 
 const authMiddleware = require('../app/middlewares/authMiddleware')
 
@@ -22,6 +24,10 @@ function routes(app) {
    app.use('/notifications', notificationRouter)
 
    app.use('/diaries', authMiddleware, diaryRouter)
+
+   app.use('/images', imageRouter)
+
+   app.use('/blogs', blogRouter)
 
    app.use('/', (req, res) => {
       res.send('This is home page')

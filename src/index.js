@@ -9,8 +9,8 @@ const db = require('./config/db')
 const app = express()
 
 // apply middlewares
-app.use(bodyParser.urlencoded({ extended: true, limit: '28mb' }))
-app.use(bodyParser.json({ limit: '28mb' }))
+app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }))
+app.use(bodyParser.json({ limit: '50mb' }))
 app.use(cors())
 
 // routes
