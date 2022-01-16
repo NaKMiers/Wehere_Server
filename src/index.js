@@ -12,7 +12,6 @@ const app = express()
 // apply middlewares
 app.use(bodyParser.urlencoded({ extended: true, limit: '100mb' }))
 app.use(bodyParser.json({ limit: '100mb' }))
-console.log(process.cwd())
 app.use(express.static(path.join(process.cwd(), 'public')))
 app.use(cors())
 

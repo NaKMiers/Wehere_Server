@@ -3,7 +3,7 @@ const multer = require('multer')
 
 const storage = multer.diskStorage({
    destination: (req, file, cb) => {
-      cb(null, './public')
+      cb(null, './public/videos/')
    },
    filename: (req, file, cb) => {
       cb(null, Date.now() + '-' + file.originalname)
@@ -20,7 +20,7 @@ class VideoController {
 
       upload(req, res, async err => {
          const statusText = req.body.statusText
-         const videoPath = req.file.path.split(`\\`)[1]
+         const videoPath = 'videos/' + req.file.path.split(`\\`)[2]
          if (err) {
             return res.status(500).json(err)
          } else {
