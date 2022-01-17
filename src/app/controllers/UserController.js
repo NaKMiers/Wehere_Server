@@ -230,7 +230,7 @@ class UserController {
          if (friendList) {
             friends = await UserModel.find({
                _id: friendList,
-               online: true,
+               // online: true,
             })
          } else {
             const curUser = await UserModel.findById(userId)
