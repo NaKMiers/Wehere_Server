@@ -1,4 +1,4 @@
-const VideoModal = require('../models/VideoModal')
+const VideoModel = require('../models/VideoModel')
 const multer = require('multer')
 
 const storage = multer.diskStorage({
@@ -19,13 +19,15 @@ class VideoController {
       const userId = req.user._id
 
       upload(req, res, async err => {
+         console.log(req.file)
+         console.log(req.body)
          const statusText = req.body.statusText
          const videoPath = 'videos/' + req.file.path.split(`\\`)[2]
          if (err) {
             return res.status(500).json(err)
          } else {
             try {
-               const videoStatus = VideoModal({ userId, statusText, video: videoPath })
+               const videoStatus = VideoModel({ userId, statusText, video: videoPath })
                await videoStatus.save()
                res.status(200).json('VideoStatus has been created.')
             } catch (err) {
