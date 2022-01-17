@@ -330,14 +330,10 @@ class UserController {
          const videoList = await VideoModel.find({ userId })
          const shortList = await ShortModel.find({ userId })
 
-         console.log('blogList: ', blogList)
-         console.log('imageList: ', imageList)
-         console.log('videoList: ', videoList)
-         console.log('shortList: ', shortList)
+         const allPosts = [].concat(blogList, imageList, videoList, shortList)
+         allPosts.sort((a, b) => (a <= b ? 1 : -1))
 
-         const allPosts = blogList + imageList + videoList + shortList
-
-         res.status(200).json()
+         res.status(200).json(allPosts)
       } catch (err) {
          res.status(500).json(err)
       }

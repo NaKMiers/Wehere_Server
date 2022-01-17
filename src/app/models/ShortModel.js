@@ -7,6 +7,7 @@ const ShortModel = new Schema(
       statusText: String,
       short: String,
       heart: [String],
+      type: { type: String, default: 'short' },
    },
    { timestamps: true }
 )

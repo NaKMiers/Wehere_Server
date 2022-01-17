@@ -7,6 +7,7 @@ const VideoModel = new Schema(
       statusText: String,
       video: String,
       heart: [String],
+      type: { type: String, default: 'video' },
    },
    { timestamps: true }
 )
