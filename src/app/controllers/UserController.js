@@ -2,6 +2,10 @@ const hash = require('object-hash')
 const UserModel = require('../models/UserModel')
 const ConversationModel = require('../models/ConversationModel')
 const NotificationModel = require('../models/NotificationModel')
+const BlogModel = require('../models/BlogModel')
+const ImageModel = require('../models/ImageModel')
+const VideoModel = require('../models/VideoModel')
+const ShortModel = require('../models/ShortModel')
 
 class UserController {
    // [GET]: /users/:userId
@@ -311,6 +315,29 @@ class UserController {
          )
 
          res.status(200).json({ background: userUpdated.background })
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [GET]: /users/get-all-posts/:userId
+   getAllPosts = async function (req, res) {
+      console.log('getAllPosts')
+      const userId = req.params.userId
+      try {
+         const blogList = await BlogModel.find({ userId })
+         const imageList = await ImageModel.find({ userId })
+         const videoList = await VideoModel.find({ userId })
+         const shortList = await ShortModel.find({ userId })
+
+         console.log('blogList: ', blogList)
+         console.log('imageList: ', imageList)
+         console.log('videoList: ', videoList)
+         console.log('shortList: ', shortList)
+
+         const allPosts = blogList + imageList + videoList + shortList
+
+         res.status(200).json()
       } catch (err) {
          res.status(500).json(err)
       }

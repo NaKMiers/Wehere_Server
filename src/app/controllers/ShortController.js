@@ -19,8 +19,6 @@ class ShortController {
       const userId = req.user._id
 
       upload(req, res, async err => {
-         console.log('req.body', req.body)
-         console.log('req.file', req.file)
          const statusText = req.body.statusText
          const shortPath = 'shorts/' + req.file.path.split(`\\`)[2]
          if (err) {

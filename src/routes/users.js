@@ -3,6 +3,7 @@ const router = express.Router()
 
 const UserController = require('../app/controllers/UserController')
 
+router.get('/get-all-posts/:userId', UserController.getAllPosts)
 router.post('/get-friends', UserController.getFriends)
 router.put('/change-theme/:themeIndex', UserController.changeTheme)
 router.put('/add-friend/request/:userId', UserController.addFriendRequest)
