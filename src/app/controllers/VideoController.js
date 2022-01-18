@@ -1,4 +1,5 @@
 const VideoModel = require('../models/VideoModel')
+const UserModel = require('../models/UserModel')
 const multer = require('multer')
 
 const storage = multer.diskStorage({
@@ -19,8 +20,6 @@ class VideoController {
       const userId = req.user._id
 
       upload(req, res, async err => {
-         console.log(req.file)
-         console.log(req.body)
          const statusText = req.body.statusText
          const videoPath = 'videos/' + req.file.path.split(`\\`)[2]
          if (err) {
@@ -35,6 +34,39 @@ class VideoController {
             }
          }
       })
+   }
+
+   // [GET]: /videos/get-videos-newfeed
+   getVideosNewfeed = async function (req, res) {
+      console.log('getVideosNewfeed')
+
+      const userId = req.user._id
+      try {
+         // get a friendList
+         const curUser = await UserModel.findById(userId)
+
+         // get users from friendList
+         let friends = await UserModel.find({ _id: { $in: curUser.friends } })
+         friends = friends.concat(curUser)
+
+         // get videos with each friend from friendList and from my videos
+         const originVideos = await VideoModel.find({
+            $or: [{ userId: { $in: curUser.friends } }, { userId: userId }],
+         })
+
+         const completedVideos = originVideos.map(v => {
+            let friendMatch = friends.find(f => {
+               return f._id.toString() === v.userId
+            })
+
+            let { createdAt, password, ...other } = friendMatch._doc
+            return { video: v, author: other }
+         })
+
+         res.status(200).json(completedVideos)
+      } catch (err) {
+         res.status(500).json(err)
+      }
    }
 }
 

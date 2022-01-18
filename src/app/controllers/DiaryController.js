@@ -5,7 +5,6 @@ class DiaryController {
    getDiaries = async function (req, res) {
       console.log('getDiaries')
       const userId = req.user._id
-      console.log('userId:', userId)
       try {
          const diaries = await DiaryModel.find({ userId })
          res.status(200).json(diaries)
@@ -18,7 +17,6 @@ class DiaryController {
    createDiary = async function (req, res) {
       console.log('createDiary')
       const data = req.body
-      console.log('data:', data)
       try {
          const diary = new DiaryModel(data)
          const newDiary = await diary.save()
@@ -33,7 +31,6 @@ class DiaryController {
       console.log('createDiary')
       const diaryId = req.params.diaryId
       const data = req.body
-      console.log('diaryId: ', diaryId)
       try {
          const diaryUpdated = await DiaryModel.findOneAndUpdate({ _id: diaryId }, data, {
             new: true,

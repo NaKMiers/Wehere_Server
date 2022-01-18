@@ -20,7 +20,6 @@ class BlogController {
    getBlogsNewfeed = async function (req, res) {
       console.log('getBlogNewFeed')
       const userId = req.user._id
-      console.log('userId: ', userId)
       try {
          // get a friendList
          const curUser = await UserModel.findById(userId)

@@ -1,4 +1,5 @@
 const ImageModel = require('../models/ImageModel')
+const UserModel = require('../models/UserModel')
 const multer = require('multer')
 
 const storage = multer.diskStorage({
@@ -19,14 +20,10 @@ class ImageController {
       const userId = req.user._id
 
       upload(req, res, async err => {
-         console.log('req.body', req.body)
-         console.log('req.files', req.files)
          const statusText = req.body.statusText
          const imagePathList = req.files.map(
             (imageFile, i) => 'images/' + imageFile.path.split(`\\`)[2]
          )
-
-         console.log(imagePathList)
 
          if (err) {
             return res.status(500).json(err)
@@ -40,6 +37,38 @@ class ImageController {
             }
          }
       })
+   }
+
+   // [GET]: /images/get-images-newfeed
+   getImagesNewfeed = async function (req, res) {
+      console.log('getImagesNewfeed')
+      const userId = req.user._id
+      try {
+         // get a friendList
+         const curUser = await UserModel.findById(userId)
+
+         // get users from friendList
+         let friends = await UserModel.find({ _id: { $in: curUser.friends } })
+         friends = friends.concat(curUser)
+
+         // get images with each friend from friendList and from my images
+         const originImages = await ImageModel.find({
+            $or: [{ userId: { $in: curUser.friends } }, { userId: userId }],
+         })
+
+         const completedImages = originImages.map(img => {
+            let friendMatch = friends.find(f => {
+               return f._id.toString() === img.userId
+            })
+
+            let { createdAt, password, ...other } = friendMatch._doc
+            return { image: img, author: other }
+         })
+
+         res.status(200).json(completedImages)
+      } catch (err) {
+         res.status(500).json(err)
+      }
    }
 }
 
