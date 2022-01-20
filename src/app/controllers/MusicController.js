@@ -1,4 +1,5 @@
-const MusicModel = require('../models/MusicModel')
+const SongModel = require('../models/SongModel')
+const PlaylistModel = require('../models/PlaylistModel')
 const multer = require('multer')
 
 const storage = multer.diskStorage({
@@ -14,7 +15,7 @@ const upload = multer({ storage }).array('song')
 // const uploadImage = multer({ storageImage }).single('image')
 
 class MusicController {
-   // [POST]: /musics/add
+   // [POST]: /musics/add-song
    addSong = async function (req, res) {
       console.log('addSong')
 
@@ -29,21 +30,69 @@ class MusicController {
             return res.status(500).json(err)
          } else {
             try {
-               const newSong = MusicModel({
+               const song = SongModel({
                   userId,
                   songName,
                   author,
                   song: songPath,
                   thumb: thumbPath,
                })
-               await newSong.save()
-               res.status(200).json('New song has been added.')
+               const newSong = await song.save()
+               res.status(200).json(newSong)
             } catch (err) {
                console.log(err)
                res.status(500).json(err)
             }
          }
       })
+   }
+
+   // [GET]: /musics/get-my-song-list
+   getMySongList = async function (req, res) {
+      console.log('getMySongList')
+
+      const userId = req.user._id
+      console.log('userId: ', userId)
+      try {
+         const songList = await SongModel.find({ userId })
+         res.status(200).json(songList)
+      } catch (err) {
+         res.status(500).json(500)
+      }
+   }
+
+   // [POST]: /musics/add-playlist
+   addPlaylist = async function (req, res) {
+      console.log('addPlaylist')
+
+      const userId = req.user._id
+      const playlistName = req.body.playlistName
+      const songs = req.body.songs
+
+      let songList = await SongModel.find({ _id: { $in: songs } })
+      songList = songList.splice(0, 4)
+      const thumbs = songList.map(s => s.thumb)
+      try {
+         const playlist = PlaylistModel({ userId, playlistName, songs, thumbs })
+         const newPlaylist = await playlist.save()
+         res.status(200).json(newPlaylist)
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [GET]: /musics/get-my-playlist-list
+   getMyPlaylistList = async function (req, res) {
+      console.log('getMyPlaylistList')
+
+      const userId = req.user._id
+      console.log('userId: ', userId)
+      try {
+         const playlistList = await PlaylistModel.find({ userId })
+         res.status(200).json(playlistList)
+      } catch (err) {
+         res.status(500).json(err)
+      }
    }
 }
 
