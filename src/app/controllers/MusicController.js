@@ -52,7 +52,6 @@ class MusicController {
       console.log('getMySongList')
 
       const userId = req.user._id
-      console.log('userId: ', userId)
       try {
          const songList = await SongModel.find({ userId })
          res.status(200).json(songList)
@@ -86,10 +85,22 @@ class MusicController {
       console.log('getMyPlaylistList')
 
       const userId = req.user._id
-      console.log('userId: ', userId)
       try {
          const playlistList = await PlaylistModel.find({ userId })
          res.status(200).json(playlistList)
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [GET]: /musics/get-playlist/:playlistId
+   getPlaylist = async function (req, res) {
+      console.log('getPlaylist')
+
+      const playlistId = req.params.playlistId
+      try {
+         const playlist = await PlaylistModel.findById(playlistId)
+         res.status(200).json(playlist)
       } catch (err) {
          res.status(500).json(err)
       }
