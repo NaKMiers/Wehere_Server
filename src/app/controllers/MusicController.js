@@ -105,6 +105,20 @@ class MusicController {
          res.status(500).json(err)
       }
    }
+
+   // [POST]: /musics/get-songList-in-playlist/
+   getSongListInPlaylist = async function (req, res) {
+      console.log('getSongListInPlaylist')
+
+      const songs = req.body
+      try {
+         const songList = await SongModel.find({ _id: { $in: songs } })
+         console.log('songList: ', songList)
+         res.status(200).json(songList)
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
 }
 
 module.exports = new MusicController()
