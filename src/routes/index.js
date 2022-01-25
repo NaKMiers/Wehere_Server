@@ -36,7 +36,7 @@ function routes(app) {
 
    app.use('/shorts', shortRouter)
 
-   app.use('/musics', musicRouter)
+   app.use('/musics', authMiddleware, musicRouter)
 
    app.use('/', (req, res) => {
       res.send('This is home page')

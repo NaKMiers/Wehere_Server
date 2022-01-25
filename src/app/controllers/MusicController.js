@@ -113,8 +113,79 @@ class MusicController {
       const songs = req.body
       try {
          const songList = await SongModel.find({ _id: { $in: songs } })
-         console.log('songList: ', songList)
          res.status(200).json(songList)
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [POST]: /musics/add-song-to-playlist
+   addSongToPlaylist = async function (req, res) {
+      console.log('addSongToPlaylist')
+
+      const { playlistId, songId } = req.body
+      try {
+         await PlaylistModel.updateOne({ _id: playlistId }, { $addToSet: { songs: songId } })
+         res.status(200).json('This is has been added to this playlist.')
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [PATCH]: /musics/remove-song-from-playlist
+   removeSongFromPlaylist = async function (req, res) {
+      console.log('removeSongFromPlaylist')
+
+      const { playlistId, songId } = req.body
+      try {
+         await PlaylistModel.findByIdAndUpdate(playlistId, { $pull: { songs: songId } })
+         res.status(200).json({ songId })
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [PATCH]: /musics/mark-favorite-song
+   markFavoriteSong = async function (req, res) {
+      console.log('markFavoriteSong')
+
+      const { songId, value } = req.body
+      try {
+         await SongModel.findByIdAndUpdate(songId, { $set: { favorite: value } })
+         res.status(200).json('This song has been make favorite.')
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [DELETE]: /musics/delete-song/:songId
+   deleteSong = async function (req, res) {
+      console.log('deleteSong')
+
+      const songId = req.params.songId
+      try {
+         const deletedSong = await SongModel.findByIdAndDelete(songId)
+         // delete all songId in playlist have this songId in
+         await PlaylistModel.updateMany(
+            {
+               songs: { $elemMatch: { $in: songId } },
+            },
+            { $pull: { songs: songId } }
+         )
+         res.status(200).json({ deletedSongId: deletedSong._id })
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [DELETE]: /musics/delete-playlist/:playlistId
+   deletePlaylist = async function (req, res) {
+      console.log('deletePlaylist')
+
+      const playlistId = req.params.playlistId
+      try {
+         const deletedPlaylist = await PlaylistModel.findByIdAndDelete(playlistId)
+         res.status(200).json({ deletedPlaylistId: deletedPlaylist._id })
       } catch (err) {
          res.status(500).json(err)
       }
