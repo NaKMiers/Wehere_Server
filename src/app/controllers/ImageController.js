@@ -70,6 +70,26 @@ class ImageController {
          res.status(500).json(err)
       }
    }
+
+   // [PATCH]: /images/like
+   likeImageStatus = async function (req, res) {
+      console.log('getBlogNewFeed')
+
+      const { imageId, userId, value } = req.body
+      console.log('imageId: ', imageId)
+      console.log('userId: ', userId)
+      console.log('value: ', value)
+      try {
+         if (value) {
+            await ImageModel.updateOne({ _id: imageId }, { $push: { hearts: userId } })
+         } else {
+            await ImageModel.updateOne({ _id: imageId }, { $pull: { hearts: userId } })
+         }
+         res.status(200).json()
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
 }
 
 module.exports = new ImageController()

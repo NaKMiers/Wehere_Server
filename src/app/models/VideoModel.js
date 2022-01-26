@@ -6,7 +6,7 @@ const VideoModel = new Schema(
       userId: String,
       statusText: String,
       video: String,
-      heart: [String],
+      hearts: [String],
       type: { type: String, default: 'video' },
    },
    { timestamps: true }

@@ -6,7 +6,7 @@ const ImageModel = new Schema(
       userId: String,
       statusText: String,
       images: [String],
-      heart: [String],
+      hearts: [String],
       type: { type: String, default: 'image' },
    },
    { timestamps: true }

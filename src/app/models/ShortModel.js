@@ -6,7 +6,7 @@ const ShortModel = new Schema(
       userId: String,
       statusText: String,
       short: String,
-      heart: [String],
+      hearts: [String],
       type: { type: String, default: 'short' },
    },
    { timestamps: true }

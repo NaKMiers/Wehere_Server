@@ -68,6 +68,26 @@ class VideoController {
          res.status(500).json(err)
       }
    }
+
+   // [PATCH]: /videos/like
+   likeVideoStatus = async function (req, res) {
+      console.log('likeVideoStatus')
+
+      const { videoId, userId, value } = req.body
+      console.log('videoId: ', videoId)
+      console.log('userId: ', userId)
+      console.log('value: ', value)
+      try {
+         if (value) {
+            await VideoModel.updateOne({ _id: videoId }, { $push: { hearts: userId } })
+         } else {
+            await VideoModel.updateOne({ _id: videoId }, { $pull: { hearts: userId } })
+         }
+         res.status(200).json()
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
 }
 
 module.exports = new VideoController()

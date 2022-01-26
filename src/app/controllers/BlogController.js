@@ -47,6 +47,26 @@ class BlogController {
          res.status(500).json(err)
       }
    }
+
+   // [PATCH]: /blogs/like
+   likeBlogStatus = async function (req, res) {
+      console.log('getBlogNewFeed')
+
+      const { blogId, userId, value } = req.body
+      console.log('blogId: ', blogId)
+      console.log('userId: ', userId)
+      console.log('value: ', value)
+      try {
+         if (value) {
+            await BlogModel.updateOne({ _id: blogId }, { $push: { hearts: userId } })
+         } else {
+            await BlogModel.updateOne({ _id: blogId }, { $pull: { hearts: userId } })
+         }
+         res.status(200).json()
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
 }
 
 module.exports = new BlogController()

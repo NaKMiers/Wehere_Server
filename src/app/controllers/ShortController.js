@@ -68,6 +68,26 @@ class ShortController {
          res.status(500).json(err)
       }
    }
+
+   // [PATCH]: /shorts/like
+   likeShortStatus = async function (req, res) {
+      console.log('likeShortStatus')
+
+      const { shortId, userId, value } = req.body
+      console.log('shortId: ', shortId)
+      console.log('userId: ', userId)
+      console.log('value: ', value)
+      try {
+         if (value) {
+            await ShortModel.updateOne({ _id: shortId }, { $push: { hearts: userId } })
+         } else {
+            await ShortModel.updateOne({ _id: shortId }, { $pull: { hearts: userId } })
+         }
+         res.status(200).json()
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
 }
 
 module.exports = new ShortController()
