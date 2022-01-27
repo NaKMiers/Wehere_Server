@@ -79,7 +79,7 @@ class VideoController {
       console.log('value: ', value)
       try {
          if (value) {
-            await VideoModel.updateOne({ _id: videoId }, { $push: { hearts: userId } })
+            await VideoModel.updateOne({ _id: videoId }, { $addToSet: { hearts: userId } })
          } else {
             await VideoModel.updateOne({ _id: videoId }, { $pull: { hearts: userId } })
          }

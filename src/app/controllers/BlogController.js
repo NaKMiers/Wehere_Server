@@ -58,7 +58,7 @@ class BlogController {
       console.log('value: ', value)
       try {
          if (value) {
-            await BlogModel.updateOne({ _id: blogId }, { $push: { hearts: userId } })
+            await BlogModel.updateOne({ _id: blogId }, { $addToSet: { hearts: userId } })
          } else {
             await BlogModel.updateOne({ _id: blogId }, { $pull: { hearts: userId } })
          }

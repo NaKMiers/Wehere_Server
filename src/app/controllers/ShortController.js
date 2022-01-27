@@ -79,7 +79,7 @@ class ShortController {
       console.log('value: ', value)
       try {
          if (value) {
-            await ShortModel.updateOne({ _id: shortId }, { $push: { hearts: userId } })
+            await ShortModel.updateOne({ _id: shortId }, { $addToSet: { hearts: userId } })
          } else {
             await ShortModel.updateOne({ _id: shortId }, { $pull: { hearts: userId } })
          }

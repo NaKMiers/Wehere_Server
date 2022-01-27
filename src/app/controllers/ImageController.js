@@ -81,7 +81,7 @@ class ImageController {
       console.log('value: ', value)
       try {
          if (value) {
-            await ImageModel.updateOne({ _id: imageId }, { $push: { hearts: userId } })
+            await ImageModel.updateOne({ _id: imageId }, { $addToSet: { hearts: userId } })
          } else {
             await ImageModel.updateOne({ _id: imageId }, { $pull: { hearts: userId } })
          }
