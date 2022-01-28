@@ -29,9 +29,14 @@ class ImageController {
             return res.status(500).json(err)
          } else {
             try {
+               // get author
+               const author = await UserModel.findById(userId)
+
+               // post vides
                const imageStatus = ImageModel({ userId, statusText, images: imagePathList })
-               await imageStatus.save()
-               res.status(200).json('ImageStatus has been created.')
+               const newImageStatus = await imageStatus.save()
+
+               res.status(200).json({ image: newImageStatus, author })
             } catch (err) {
                res.status(500).json(err)
             }
@@ -86,6 +91,19 @@ class ImageController {
             await ImageModel.updateOne({ _id: imageId }, { $pull: { hearts: userId } })
          }
          res.status(200).json()
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [DELETE]: /images/delele-image/:imageId
+   deleteImageStatus = async function (req, res) {
+      console.log('deleteImageStatus')
+
+      const imageId = req.params.imageId
+      try {
+         const imageDeleted = await ImageModel.findByIdAndDelete(imageId)
+         res.status(200).json(imageDeleted)
       } catch (err) {
          res.status(500).json(err)
       }

@@ -150,6 +150,8 @@ class MusicController {
       console.log('markFavoriteSong')
 
       const { songId, value } = req.body
+      console.log('songId: ', songId)
+      console.log('value: ', value)
       try {
          await SongModel.findByIdAndUpdate(songId, { $set: { favorite: value } })
          res.status(200).json('This song has been make favorite.')

@@ -26,9 +26,14 @@ class ShortController {
             return res.status(500).json(err)
          } else {
             try {
+               // get author
+               const author = await UserModel.findById(userId)
+
+               // post video
                const shortStatus = ShortModel({ userId, statusText, short: shortPath })
-               await shortStatus.save()
-               res.status(200).json('ShortStatus has been created.')
+               const newShortStatus = await shortStatus.save()
+
+               res.status(200).json({ short: newShortStatus, author })
             } catch (err) {
                res.status(500).json(err)
             }
@@ -74,9 +79,6 @@ class ShortController {
       console.log('likeShortStatus')
 
       const { shortId, userId, value } = req.body
-      console.log('shortId: ', shortId)
-      console.log('userId: ', userId)
-      console.log('value: ', value)
       try {
          if (value) {
             await ShortModel.updateOne({ _id: shortId }, { $addToSet: { hearts: userId } })
@@ -84,6 +86,19 @@ class ShortController {
             await ShortModel.updateOne({ _id: shortId }, { $pull: { hearts: userId } })
          }
          res.status(200).json()
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [DELETE]: /shorts/delele-short/:shortId
+   deleteShortStatus = async function (req, res) {
+      console.log('deleteShortStatus')
+
+      const shortId = req.params.shortId
+      try {
+         const shortDeleted = await ShortModel.findByIdAndDelete(shortId)
+         res.status(200).json(shortDeleted)
       } catch (err) {
          res.status(500).json(err)
       }

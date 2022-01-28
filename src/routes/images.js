@@ -7,5 +7,6 @@ const authMiddleware = require('../app/middlewares/authMiddleware')
 router.get('/get-images-newfeed', authMiddleware, ImageController.getImagesNewfeed)
 router.post('/post', authMiddleware, ImageController.postImageStatus)
 router.patch('/like', authMiddleware, ImageController.likeImageStatus)
+router.delete('/delete-image/:imageId', authMiddleware, ImageController.deleteImageStatus)
 
 module.exports = router

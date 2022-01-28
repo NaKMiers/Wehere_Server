@@ -6,8 +6,8 @@ const UserModel = new Schema(
       username: String,
       email: String,
       password: String,
-      avatar: { type: String, default: 'https://bom.so/CRZ2w9' },
-      background: { type: String, default: 'https://bom.so/6K8pK7' },
+      avatar: { type: String, default: 'avatars/avatarDefault.png' },
+      background: { type: String, default: 'backgrounds/backgroundDefault.jpg' },
       authType: {
          type: String,
          enum: ['local', 'google', 'facebook'],

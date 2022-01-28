@@ -8,9 +8,14 @@ class BlogController {
       const userId = req.user._id
       const data = req.body
       try {
+         // get author
+         const author = await UserModel.findById(userId)
+
+         // post vides
          const blogStatus = BlogModel({ ...data, userId })
-         await blogStatus.save()
-         res.status(200).json('BlogStatus has been created.')
+         const newBlogStatus = await blogStatus.save()
+
+         res.status(200).json({ blog: newBlogStatus, author })
       } catch (err) {
          res.status(500).json(err)
       }
@@ -63,6 +68,19 @@ class BlogController {
             await BlogModel.updateOne({ _id: blogId }, { $pull: { hearts: userId } })
          }
          res.status(200).json()
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [DELETE]: /blogs/delele-blog/:blogId
+   deleteBlogStatus = async function (req, res) {
+      console.log('deleteBlogStatus')
+
+      const blogId = req.params.blogId
+      try {
+         const blogDeleted = await BlogModel.findByIdAndDelete(blogId)
+         res.status(200).json(blogDeleted)
       } catch (err) {
          res.status(500).json(err)
       }

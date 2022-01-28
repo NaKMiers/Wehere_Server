@@ -26,9 +26,14 @@ class VideoController {
             return res.status(500).json(err)
          } else {
             try {
+               // get author
+               const author = await UserModel.findById(userId)
+
+               // post vides
                const videoStatus = VideoModel({ userId, statusText, video: videoPath })
-               await videoStatus.save()
-               res.status(200).json('VideoStatus has been created.')
+               const newVideoStatus = await videoStatus.save()
+
+               res.status(200).json({ video: newVideoStatus, author })
             } catch (err) {
                res.status(500).json(err)
             }
@@ -74,9 +79,6 @@ class VideoController {
       console.log('likeVideoStatus')
 
       const { videoId, userId, value } = req.body
-      console.log('videoId: ', videoId)
-      console.log('userId: ', userId)
-      console.log('value: ', value)
       try {
          if (value) {
             await VideoModel.updateOne({ _id: videoId }, { $addToSet: { hearts: userId } })
@@ -84,6 +86,19 @@ class VideoController {
             await VideoModel.updateOne({ _id: videoId }, { $pull: { hearts: userId } })
          }
          res.status(200).json()
+      } catch (err) {
+         res.status(500).json(err)
+      }
+   }
+
+   // [DELETE]: /videos/delele-video/:videoId
+   deleteVideoStatus = async function (req, res) {
+      console.log('deleteVideoStatus')
+
+      const videoId = req.params.videoId
+      try {
+         const videoDeleted = await VideoModel.findByIdAndDelete(videoId)
+         res.status(200).json(videoDeleted)
       } catch (err) {
          res.status(500).json(err)
       }

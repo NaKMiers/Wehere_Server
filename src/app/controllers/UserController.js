@@ -6,7 +6,28 @@ const BlogModel = require('../models/BlogModel')
 const ImageModel = require('../models/ImageModel')
 const VideoModel = require('../models/VideoModel')
 const ShortModel = require('../models/ShortModel')
+const multer = require('multer')
 
+const storageAvatar = multer.diskStorage({
+   destination: (req, file, cb) => {
+      cb(null, './public/avatars/')
+   },
+   filename: (req, file, cb) => {
+      cb(null, Date.now() + '-' + file.originalname)
+   },
+})
+
+const uploadAvatar = multer({ storage: storageAvatar }).single('avatar')
+
+const storageBackground = multer.diskStorage({
+   destination: (req, file, cb) => {
+      cb(null, './public/backgrounds/')
+   },
+   filename: (req, file, cb) => {
+      cb(null, Date.now() + '-' + file.originalname)
+   },
+})
+const uploadBackground = multer({ storage: storageBackground }).single('background')
 class UserController {
    // [GET]: /users/:userId
    getUser = async function (req, res) {
@@ -288,36 +309,49 @@ class UserController {
    updateAvatar = async function (req, res) {
       console.log('updateAvatar')
       const userId = req.user._id
-      const avatar = req.body.avatar
-      try {
-         const userUpdated = await UserModel.findOneAndUpdate(
-            { _id: userId },
-            { $set: { avatar } },
-            { new: true }
-         )
 
-         res.status(200).json({ avatar: userUpdated.avatar })
-      } catch (err) {
-         res.status(500).json(err)
-      }
+      uploadAvatar(req, res, async err => {
+         const avatarPath = 'avatars/' + req.file.path.split(`\\`)[2]
+         if (err) {
+            return res.status(500).json(err)
+         } else {
+            try {
+               const userUpdated = await UserModel.findOneAndUpdate(
+                  { _id: userId },
+                  { $set: { avatar: avatarPath } },
+                  { new: true }
+               )
+               res.status(200).json({ avatar: userUpdated.avatar })
+            } catch (err) {
+               res.status(500).json(err)
+            }
+         }
+      })
    }
 
    // [PUT]: /users/update-background
    updateBackground = async function (req, res) {
       console.log('updateBackground')
       const userId = req.user._id
-      const background = req.body.background
-      try {
-         const userUpdated = await UserModel.findOneAndUpdate(
-            { _id: userId },
-            { $set: { background } },
-            { new: true }
-         )
 
-         res.status(200).json({ background: userUpdated.background })
-      } catch (err) {
-         res.status(500).json(err)
-      }
+      uploadBackground(req, res, async err => {
+         const backgroundPath = 'backgrounds/' + req.file.path.split(`\\`)[2]
+         if (err) {
+            return res.status(500).json(err)
+         } else {
+            try {
+               const userUpdated = await UserModel.findOneAndUpdate(
+                  { _id: userId },
+                  { $set: { background: backgroundPath } },
+                  { new: true }
+               )
+
+               res.status(200).json({ background: userUpdated.background })
+            } catch (err) {
+               res.status(500).json(err)
+            }
+         }
+      })
    }
 
    // [GET]: /users/get-all-posts/:userId
