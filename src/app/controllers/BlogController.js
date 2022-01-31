@@ -58,9 +58,6 @@ class BlogController {
       console.log('getBlogNewFeed')
 
       const { blogId, userId, value } = req.body
-      console.log('blogId: ', blogId)
-      console.log('userId: ', userId)
-      console.log('value: ', value)
       try {
          if (value) {
             await BlogModel.updateOne({ _id: blogId }, { $addToSet: { hearts: userId } })

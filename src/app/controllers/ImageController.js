@@ -81,9 +81,6 @@ class ImageController {
       console.log('getBlogNewFeed')
 
       const { imageId, userId, value } = req.body
-      console.log('imageId: ', imageId)
-      console.log('userId: ', userId)
-      console.log('value: ', value)
       try {
          if (value) {
             await ImageModel.updateOne({ _id: imageId }, { $addToSet: { hearts: userId } })
