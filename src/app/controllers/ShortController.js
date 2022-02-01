@@ -21,6 +21,8 @@ class ShortController {
 
       upload(req, res, async err => {
          const statusText = req.body.statusText
+         console.log('statusText: ', statusText)
+         console.log('req.file: ', req.file)
          const shortPath = 'shorts/' + req.file.path.split(`\\`)[2]
          if (err) {
             return res.status(500).json(err)
@@ -46,6 +48,7 @@ class ShortController {
       console.log('getShortsNewfeed')
 
       const userId = req.user._id
+      console.log('userId: ', userId)
       try {
          // get a friendList
          const curUser = await UserModel.findById(userId)
@@ -79,6 +82,7 @@ class ShortController {
       console.log('likeShortStatus')
 
       const { shortId, userId, value } = req.body
+      console.log('shortId-userId-userId: ', shortId, userId, value)
       try {
          if (value) {
             await ShortModel.updateOne({ _id: shortId }, { $addToSet: { hearts: userId } })
@@ -96,6 +100,7 @@ class ShortController {
       console.log('deleteShortStatus')
 
       const shortId = req.params.shortId
+      console.log('imageId: ', imageId)
       try {
          const shortDeleted = await ShortModel.findByIdAndDelete(shortId)
          res.status(200).json(shortDeleted)

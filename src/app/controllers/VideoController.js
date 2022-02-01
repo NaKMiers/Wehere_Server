@@ -21,6 +21,8 @@ class VideoController {
 
       upload(req, res, async err => {
          const statusText = req.body.statusText
+         console.log('statusText: ', statusText)
+         console.log('req.file: ', req.file)
          const videoPath = 'videos/' + req.file.path.split(`\\`)[2]
          if (err) {
             return res.status(500).json(err)
@@ -46,6 +48,7 @@ class VideoController {
       console.log('getVideosNewfeed')
 
       const userId = req.user._id
+      console.log('userId: ', userId)
       try {
          // get a friendList
          const curUser = await UserModel.findById(userId)
@@ -79,6 +82,7 @@ class VideoController {
       console.log('likeVideoStatus')
 
       const { videoId, userId, value } = req.body
+      console.log('videoId-userId-userId: ', videoId, userId, value)
       try {
          if (value) {
             await VideoModel.updateOne({ _id: videoId }, { $addToSet: { hearts: userId } })
@@ -96,6 +100,7 @@ class VideoController {
       console.log('deleteVideoStatus')
 
       const videoId = req.params.videoId
+      console.log('videoId: ', videoId)
       try {
          const videoDeleted = await VideoModel.findByIdAndDelete(videoId)
          res.status(200).json(videoDeleted)

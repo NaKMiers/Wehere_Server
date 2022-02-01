@@ -21,6 +21,8 @@ class ImageController {
 
       upload(req, res, async err => {
          const statusText = req.body.statusText
+         console.log('statusText: ', statusText)
+         console.log('req.files: ', req.files)
          const imagePathList = req.files.map(
             (imageFile, i) => 'images/' + imageFile.path.split(`\\`)[2]
          )
@@ -47,7 +49,9 @@ class ImageController {
    // [GET]: /images/get-images-newfeed
    getImagesNewfeed = async function (req, res) {
       console.log('getImagesNewfeed')
+
       const userId = req.user._id
+      console.log('userId: ', userId)
       try {
          // get a friendList
          const curUser = await UserModel.findById(userId)
@@ -81,6 +85,7 @@ class ImageController {
       console.log('getBlogNewFeed')
 
       const { imageId, userId, value } = req.body
+      console.log('imageId-userId-userId: ', imageId, userId, value)
       try {
          if (value) {
             await ImageModel.updateOne({ _id: imageId }, { $addToSet: { hearts: userId } })
@@ -98,6 +103,7 @@ class ImageController {
       console.log('deleteImageStatus')
 
       const imageId = req.params.imageId
+      console.log('imageId: ', imageId)
       try {
          const imageDeleted = await ImageModel.findByIdAndDelete(imageId)
          res.status(200).json(imageDeleted)
