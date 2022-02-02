@@ -311,7 +311,8 @@ class UserController {
       const userId = req.user._id
 
       uploadAvatar(req, res, async err => {
-         const avatarPath = 'avatars/' + req.file.path.split(`\\`)[2]
+         const avatarPath = 'avatars/' + req.file.path.split(`/`)[2]
+         console.log('avatarPath: ', avatarPath)
          if (err) {
             return res.status(500).json(err)
          } else {
@@ -335,7 +336,8 @@ class UserController {
       const userId = req.user._id
 
       uploadBackground(req, res, async err => {
-         const backgroundPath = 'backgrounds/' + req.file.path.split(`\\`)[2]
+         const backgroundPath = 'backgrounds/' + req.file.path.split(`/`)[2]
+         console.log('backgroundPath: ', backgroundPath)
          if (err) {
             return res.status(500).json(err)
          } else {

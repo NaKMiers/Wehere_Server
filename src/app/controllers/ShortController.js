@@ -23,7 +23,7 @@ class ShortController {
          const statusText = req.body.statusText
          console.log('statusText: ', statusText)
          console.log('req.file: ', req.file)
-         const shortPath = 'shorts/' + req.file.path.split(`\\`)[2]
+         const shortPath = 'shorts/' + req.file.path.split(`/`)[2]
          if (err) {
             return res.status(500).json(err)
          } else {

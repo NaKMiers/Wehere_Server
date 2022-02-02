@@ -23,8 +23,8 @@ class MusicController {
       upload(req, res, async err => {
          const songName = req.body.songName
          const author = req.body.author
-         const songPath = 'musics/' + req.files[0].path.split(`\\`)[2]
-         const thumbPath = 'musics/' + req.files[1].path.split(`\\`)[2]
+         const songPath = 'musics/' + req.files[0].path.split(`/`)[2]
+         const thumbPath = 'musics/' + req.files[1].path.split(`/`)[2]
          if (err) {
             console.log('err: ', err)
             return res.status(500).json(err)
