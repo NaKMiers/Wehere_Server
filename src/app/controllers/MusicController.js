@@ -12,7 +12,6 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage }).array('song')
-// const uploadImage = multer({ storageImage }).single('image')
 
 class MusicController {
    // [POST]: /musics/add-song
@@ -22,28 +21,32 @@ class MusicController {
       const userId = req.user._id
       upload(req, res, async err => {
          const songName = req.body.songName
+         console.log('songName: ', songName)
          const author = req.body.author
+         console.log('author: ', author)
+         console.log('req.files: ', req.files)
+         console.log('req.file: ', req.file)
          const songPath = 'musics/' + req.files[0].path.split(`/`)[2]
          const thumbPath = 'musics/' + req.files[1].path.split(`/`)[2]
-         if (err) {
-            console.log('err: ', err)
-            return res.status(500).json(err)
-         } else {
-            try {
-               const song = SongModel({
-                  userId,
-                  songName,
-                  author,
-                  song: songPath,
-                  thumb: thumbPath,
-               })
-               const newSong = await song.save()
-               res.status(200).json(newSong)
-            } catch (err) {
-               console.log(err)
-               res.status(500).json(err)
-            }
-         }
+         // if (err) {
+         //    console.log('err: ', err)
+         //    return res.status(500).json(err)
+         // } else {
+         //    try {
+         //       const song = SongModel({
+         //          userId,
+         //          songName,
+         //          author,
+         //          song: songPath,
+         //          thumb: thumbPath,
+         //       })
+         //       const newSong = await song.save()
+         //       res.status(200).json(newSong)
+         //    } catch (err) {
+         //       console.log(err)
+         //       res.status(500).json(err)
+         //    }
+         // }
       })
    }
 
