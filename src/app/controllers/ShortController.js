@@ -22,7 +22,6 @@ class ShortController {
       upload(req, res, async err => {
          const statusText = req.body.statusText
          console.log('statusText: ', statusText)
-         console.log('req.file: ', req.file)
          console.log('req.files: ', req.files)
          const shortPathList = req.files.map(shortFile => 'shorts/' + shortFile.path.split(`/`)[2])
          console.log('shortPathList: ', shortPathList)

@@ -4,7 +4,8 @@
    "description": "This is the server side of my website (wehere)",
    "main": "./src/index.js",
    "scripts": {
-      "start": "node ./src/index.js"
+      "start": "node ./src/index.js",
+      "dev": "nodemon ./src/index.js"
    },
    "keywords": [
       "nakmiers",

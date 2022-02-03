@@ -24,7 +24,7 @@ class ImageController {
          const statusText = req.body.statusText
          console.log('statusText: ', statusText)
          console.log('req.files: ', req.files)
-         const imagePathList = req.files.map(imageFile => 'images/' + imageFile.path.split(`\\`)[2])
+         const imagePathList = req.files.map(imageFile => 'images/' + imageFile.path.split(`/`)[2])
          // console.log('imagePathList: ', imagePathList)
 
          if (err) {

@@ -7,7 +7,8 @@ const storage = multer.diskStorage({
       cb(null, './public/videos/')
    },
    filename: (req, file, cb) => {
-      cb(null, Date.now() + '-' + file.originalname)
+      let name = Date.now() + '-' + file.originalname
+      cb(null, name)
    },
 })
 
@@ -21,28 +22,28 @@ class VideoController {
 
       upload(req, res, async err => {
          const statusText = req.body.statusText
+         console.log('req: ', req)
          console.log('statusText: ', statusText)
-         console.log('req.file: ', req.file)
          console.log('req.files: ', req.files)
          const videoPathList = req.files.map(videoFile => 'videos/' + videoFile.path.split(`/`)[2])
          console.log('videoPathList: ', videoPathList)
-         console.log('videoPathList[0]: ', videoPathList[0])
-         if (err) {
-            return res.status(500).json(err)
-         } else {
-            try {
-               // get author
-               const author = await UserModel.findById(userId)
+         // console.log('videoPathList[0]: ', videoPathList[0])
+         // if (err) {
+         //    return res.status(500).json(err)
+         // } else {
+         //    try {
+         //       // get author
+         //       const author = await UserModel.findById(userId)
 
-               // post vides
-               const videoStatus = VideoModel({ userId, statusText, video: videoPathList[0] })
-               const newVideoStatus = await videoStatus.save()
+         //       // post vides
+         //       const videoStatus = VideoModel({ userId, statusText, video: videoPathList[0] })
+         //       const newVideoStatus = await videoStatus.save()
 
-               res.status(200).json({ video: newVideoStatus, author })
-            } catch (err) {
-               res.status(500).json(err)
-            }
-         }
+         //       res.status(200).json({ video: newVideoStatus, author })
+         //    } catch (err) {
+         //       res.status(500).json(err)
+         //    }
+         // }
       })
    }
 
