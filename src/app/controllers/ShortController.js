@@ -103,7 +103,7 @@ class ShortController {
       console.log('deleteShortStatus')
 
       const shortId = req.params.shortId
-      console.log('imageId: ', imageId)
+      console.log('shortId: ', shortId)
       try {
          const shortDeleted = await ShortModel.findByIdAndDelete(shortId)
          res.status(200).json(shortDeleted)
