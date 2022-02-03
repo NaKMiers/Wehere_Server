@@ -29,28 +29,26 @@ class MusicController {
          console.log('req.files: ', req.files)
          const songPath = 'musics/' + req.files[0].path.split(`/`)[2]
          const thumbPath = 'musics/' + req.files[1].path.split(`/`)[2]
-         conosle.log('songPath: ', songPath)
-         conosle.log('thumbPath: ', thumbPath)
 
-         // if (err) {
-         //    console.log('err: ', err)
-         //    return res.status(500).json(err)
-         // } else {
-         //    try {
-         //       const song = SongModel({
-         //          userId,
-         //          songName,
-         //          author,
-         //          song: songPath,
-         //          thumb: thumbPath,
-         //       })
-         //       const newSong = await song.save()
-         //       res.status(200).json(newSong)
-         //    } catch (err) {
-         //       console.log(err)
-         //       res.status(500).json(err)
-         //    }
-         // }
+         if (err) {
+            console.log('err: ', err)
+            return res.status(500).json(err)
+         } else {
+            try {
+               const song = SongModel({
+                  userId,
+                  songName,
+                  author,
+                  song: songPath,
+                  thumb: thumbPath,
+               })
+               const newSong = await song.save()
+               res.status(200).json(newSong)
+            } catch (err) {
+               console.log(err)
+               res.status(500).json(err)
+            }
+         }
       })
    }
 
