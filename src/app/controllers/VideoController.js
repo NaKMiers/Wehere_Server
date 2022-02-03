@@ -28,22 +28,21 @@ class VideoController {
          const videoPathList = req.files.map(videoFile => 'videos/' + videoFile.path.split(`/`)[2])
          console.log('videoPathList: ', videoPathList)
          // console.log('videoPathList[0]: ', videoPathList[0])
-         // if (err) {
-         //    return res.status(500).json(err)
-         // } else {
-         //    try {
-         //       // get author
-         //       const author = await UserModel.findById(userId)
-
-         //       // post vides
-         //       const videoStatus = VideoModel({ userId, statusText, video: videoPathList[0] })
-         //       const newVideoStatus = await videoStatus.save()
-
-         //       res.status(200).json({ video: newVideoStatus, author })
-         //    } catch (err) {
-         //       res.status(500).json(err)
-         //    }
-         // }
+         if (err) {
+            console.log('err: ', err)
+            return res.status(500).json(err)
+         } else {
+            // try {
+            //    // get author
+            //    const author = await UserModel.findById(userId)
+            //    // post vides
+            //    const videoStatus = VideoModel({ userId, statusText, video: videoPathList[0] })
+            //    const newVideoStatus = await videoStatus.save()
+            //    res.status(200).json({ video: newVideoStatus, author })
+            // } catch (err) {
+            //    res.status(500).json(err)
+            // }
+         }
       })
    }
 
