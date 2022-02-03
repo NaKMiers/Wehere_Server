@@ -27,7 +27,6 @@ class VideoController {
          console.log('req.files: ', req.files)
          const videoPathList = req.files.map(videoFile => 'videos/' + videoFile.path.split(`/`)[2])
          console.log('videoPathList: ', videoPathList)
-         // console.log('videoPathList[0]: ', videoPathList[0])
          if (err) {
             console.log('err: ', err)
             return res.status(500).json(err)

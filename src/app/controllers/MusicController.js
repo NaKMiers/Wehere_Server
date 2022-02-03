@@ -7,7 +7,8 @@ const storage = multer.diskStorage({
       cb(null, './public/musics')
    },
    filename: (req, file, cb) => {
-      cb(null, Date.now() + '-' + file.originalname)
+      let name = Date.now() + '-' + file.originalname
+      cb(null, name)
    },
 })
 
@@ -21,13 +22,14 @@ class MusicController {
       const userId = req.user._id
       upload(req, res, async err => {
          const songName = req.body.songName
-         console.log('songName: ', songName)
          const author = req.body.author
+         console.log('songName: ', songName)
          console.log('author: ', author)
+         console.log('req: ', req)
          console.log('req.files: ', req.files)
-         console.log('req.file: ', req.file)
-         const songPath = 'musics/' + req.files[0].path.split(`/`)[2]
-         const thumbPath = 'musics/' + req.files[1].path.split(`/`)[2]
+         // const songPath = 'musics/' + req.files[0].path.split(`/`)[2]
+         // const thumbPath = 'musics/' + req.files[1].path.split(`/`)[2]
+
          // if (err) {
          //    console.log('err: ', err)
          //    return res.status(500).json(err)
