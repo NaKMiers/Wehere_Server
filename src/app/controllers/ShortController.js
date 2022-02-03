@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
    },
 })
 
-const upload = multer({ storage }).single('short')
+const upload = multer({ storage }).array('short')
 
 class ShortController {
    // [POST]: /shorts/post
@@ -24,7 +24,9 @@ class ShortController {
          console.log('statusText: ', statusText)
          console.log('req.file: ', req.file)
          console.log('req.files: ', req.files)
-         const shortPath = 'shorts/' + req.file.path.split(`/`)[2]
+         const shortPathList = req.files.map(shortFile => 'shorts/' + shortFile.path.split(`/`)[2])
+         console.log('shortPathList: ', shortPathList)
+         console.log('shortPathList[0]: ', shortPathList[0])
          if (err) {
             return res.status(500).json(err)
          } else {
@@ -33,7 +35,7 @@ class ShortController {
                const author = await UserModel.findById(userId)
 
                // post video
-               const shortStatus = ShortModel({ userId, statusText, short: shortPath })
+               const shortStatus = ShortModel({ userId, statusText, short: shortPathList[0] })
                const newShortStatus = await shortStatus.save()
 
                res.status(200).json({ short: newShortStatus, author })

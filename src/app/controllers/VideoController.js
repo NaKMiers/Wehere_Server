@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
    },
 })
 
-const upload = multer({ storage }).single('video')
+const upload = multer({ storage }).array('video')
 
 class VideoController {
    // [POST]: /videos/post
@@ -24,7 +24,9 @@ class VideoController {
          console.log('statusText: ', statusText)
          console.log('req.file: ', req.file)
          console.log('req.files: ', req.files)
-         const videoPath = 'videos/' + req.file.path.split(`/`)[2]
+         const videoPathList = req.files.map(videoFile => 'videos/' + videoFile.path.split(`/`)[2])
+         console.log('videoPathList: ', videoPathList)
+         console.log('videoPathList[0]: ', videoPathList[0])
          if (err) {
             return res.status(500).json(err)
          } else {
@@ -33,7 +35,7 @@ class VideoController {
                const author = await UserModel.findById(userId)
 
                // post vides
-               const videoStatus = VideoModel({ userId, statusText, video: videoPath })
+               const videoStatus = VideoModel({ userId, statusText, video: videoPathList[0] })
                const newVideoStatus = await videoStatus.save()
 
                res.status(200).json({ video: newVideoStatus, author })
