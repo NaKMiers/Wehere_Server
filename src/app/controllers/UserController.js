@@ -208,13 +208,13 @@ class UserController {
    // [PUT]: /users/online-status
    changeOnlineStatus = async function (req, res, next) {
       console.log('changeOnlineStatus')
+
       const userId = req.user._id
       const status = req.body.status
       try {
          await UserModel.updateOne(
             { _id: userId },
-            { $set: { online: status, onlineLated: Date.now() } },
-            { new: true }
+            { $set: { online: status, onlineLated: Date.now() } }
          )
          res.status(200)
       } catch (err) {
@@ -251,7 +251,6 @@ class UserController {
          if (friendList) {
             friends = await UserModel.find({
                _id: friendList,
-               // online: true,
             })
          } else {
             const curUser = await UserModel.findById(userId)
