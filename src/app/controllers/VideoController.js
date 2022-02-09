@@ -50,6 +50,7 @@ class VideoController {
       console.log('getVideosNewfeed')
 
       const userId = req.user._id
+      console.log('userId: ', userId)
       try {
          // get a friendList
          const curUser = await UserModel.findById(userId)
