@@ -32,7 +32,7 @@ class UserController {
    // [GET]: /users/:userId
    getUser = async function (req, res) {
       console.log('getUser')
-      const userId = req.params.userId === 'undefined' ? req.user._id : req.params.userId
+      const userId = !req.params.userId ? req.user._id : req.params.userId
       const authGoogleId = req.user.authGoogleId
       const authType = req.user.authType
       try {
