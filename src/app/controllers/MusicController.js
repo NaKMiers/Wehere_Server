@@ -25,7 +25,6 @@ class MusicController {
          const author = req.body.author
          console.log('songName: ', songName)
          console.log('author: ', author)
-         console.log('req: ', req)
          console.log('req.files: ', req.files)
          const songPath = 'musics/' + req.files[0].path.split(`/`)[2]
          const thumbPath = 'musics/' + req.files[1].path.split(`/`)[2]
