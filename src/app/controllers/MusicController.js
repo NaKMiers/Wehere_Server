@@ -40,7 +40,7 @@ class MusicController {
          if (filePath2) {
             thumbPath = 'musics/' + filePath2
          } else {
-            thumbPath = 'musics/' + req.files[0].path.split(`/`)[2]
+            thumbPath = 'musics/' + req.files[1].path.split(`/`)[2]
          }
 
          if (err) {
