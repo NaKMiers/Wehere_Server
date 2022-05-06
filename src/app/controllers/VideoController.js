@@ -25,7 +25,13 @@ class VideoController {
          console.log('req: ', req)
          console.log('statusText: ', statusText)
          console.log('req.files: ', req.files)
-         const videoPathList = req.files.map(videoFile => 'videos/' + videoFile.path.split(`/`)[2])
+         const videoPathList = req.files.map(videoFile => {
+            if (videoFile.path.split(`\\`)[2]) {
+               return 'videos/' + videoFile.path.split(`\\`)[2]
+            } else {
+               return 'videos/' + videoFile.path.split(`/`)[2]
+            }
+         })
          console.log('videoPathList: ', videoPathList)
          if (err) {
             console.log('err: ', err)

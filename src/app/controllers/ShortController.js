@@ -23,7 +23,13 @@ class ShortController {
          const statusText = req.body.statusText
          console.log('statusText: ', statusText)
          console.log('req.files: ', req.files)
-         const shortPathList = req.files.map(shortFile => 'shorts/' + shortFile.path.split(`/`)[2])
+         const shortPathList = req.files.map(shortFile => {
+            if (shortFile.path.split(`\\`)[2]) {
+               return 'shorts/' + shortFile.path.split(`\\`)[2]
+            } else {
+               return 'shorts/' + shortFile.path.split(`/`)[2]
+            }
+         })
          console.log('shortPathList: ', shortPathList)
          console.log('shortPathList[0]: ', shortPathList[0])
          if (err) {

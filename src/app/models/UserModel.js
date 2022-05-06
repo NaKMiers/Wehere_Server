@@ -6,7 +6,7 @@ const UserModel = new Schema(
       username: String,
       email: String,
       password: String,
-      avatar: { type: String, default: 'avatars/avatarDefault.png' },
+      avatar: { type: String, default: 'avatars/avatarDefault.jpg' },
       background: { type: String, default: 'backgrounds/backgroundDefault.jpg' },
       authType: {
          type: String,
@@ -24,7 +24,7 @@ const UserModel = new Schema(
       onlineLated: { type: Date, default: Date.now() },
       songs: Array,
       playlists: Array,
-      friends: { type: Array, default: ['6203978d172a867db4071ed4'] },
+      friends: { type: Array },
       saved: Array,
       setting: {
          theme: { type: Number, default: 0 },

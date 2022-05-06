@@ -26,8 +26,22 @@ class MusicController {
          console.log('songName: ', songName)
          console.log('author: ', author)
          console.log('req.files: ', req.files)
-         const songPath = 'musics/' + req.files[0].path.split(`/`)[2]
-         const thumbPath = 'musics/' + req.files[1].path.split(`/`)[2]
+
+         let filePath1 = req.files[0].path.split(`\\`)[2]
+         let songPath
+         if (filePath1) {
+            songPath = 'musics/' + filePath1
+         } else {
+            songPath = 'musics/' + req.files[0].path.split(`/`)[2]
+         }
+
+         let filePath2 = req.files[1].path.split(`\\`)[2]
+         let thumbPath
+         if (filePath2) {
+            thumbPath = 'musics/' + filePath2
+         } else {
+            thumbPath = 'musics/' + req.files[0].path.split(`/`)[2]
+         }
 
          if (err) {
             console.log('err: ', err)

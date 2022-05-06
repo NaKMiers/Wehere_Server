@@ -24,8 +24,14 @@ class ImageController {
          const statusText = req.body.statusText
          console.log('statusText: ', statusText)
          console.log('req.files: ', req.files)
-         const imagePathList = req.files.map(imageFile => 'images/' + imageFile.path.split(`/`)[2])
-         // console.log('imagePathList: ', imagePathList)
+         const imagePathList = req.files.map(imageFile => {
+            if (imageFile.path.split(`\\`)[2]) {
+               return 'images/' + imageFile.path.split(`\\`)[2]
+            } else {
+               return 'images/' + imageFile.path.split(`/`)[2]
+            }
+         })
+         console.log('imagePathList: ', imagePathList)
 
          if (err) {
             return res.status(500).json(err)

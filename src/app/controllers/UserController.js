@@ -134,7 +134,10 @@ class UserController {
             )
 
             // add curUserId to userRequest's friendList
-            await UserModel.updateOne({ _id: userRequestId }, { $addToSet: { friends: curUserId } })
+            await UserModel.updateOne(
+               { _id: userRequestId },
+               { $addToSet: { friends: curUserId } }
+            )
             // add notify to userRequest's notifications
             const notifyData = {
                type: 'ADD_FRIEND_RESPONSE',
@@ -311,7 +314,14 @@ class UserController {
       const userId = req.user._id
 
       uploadAvatar(req, res, async err => {
-         const avatarPath = 'avatars/' + req.file.path.split(`/`)[2]
+         console.log('req.file', req.file)
+         let filePath = req.file.path.split(`\\`)[2]
+         let avatarPath
+         if (filePath) {
+            avatarPath = 'avatars/' + filePath
+         } else {
+            avatarPath = 'avatars/' + req.file.path.split(`/`)[2]
+         }
          console.log('avatarPath: ', avatarPath)
          if (err) {
             return res.status(500).json(err)
@@ -336,7 +346,7 @@ class UserController {
       const userId = req.user._id
 
       uploadBackground(req, res, async err => {
-         const backgroundPath = 'backgrounds/' + req.file.path.split(`/`)[2]
+         const backgroundPath = 'backgrounds/' + req.file.path.split(`\\`)[2]
          console.log('backgroundPath: ', backgroundPath)
          if (err) {
             return res.status(500).json(err)
