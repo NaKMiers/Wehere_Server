@@ -346,7 +346,13 @@ class UserController {
       const userId = req.user._id
 
       uploadBackground(req, res, async err => {
-         const backgroundPath = 'backgrounds/' + req.file.path.split(`\\`)[2]
+         let filePath = req.file.path.split(`\\`)[2]
+         let backgroundPath
+         if (filePath) {
+            backgroundPath = 'backgrounds/' + filePath
+         } else {
+            backgroundPath = 'backgrounds/' + req.file.path.split(`/`)[2]
+         }
          console.log('backgroundPath: ', backgroundPath)
          if (err) {
             return res.status(500).json(err)
